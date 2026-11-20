@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>YouTube Transcript – Bookmarklet</title>
+<style>
+:root{--bg:#fafaf8;--fg:#1d1d1b;--mu:#6b6b66;--bd:#e3e2dc;--ac:#c4302b;--card:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#161615;--fg:#ecebe6;--mu:#9a9993;--bd:#2e2d2a;--ac:#ff5a52;--card:#1f1f1d}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:48px 24px 64px}
+h1{font-size:30px;line-height:1.2;margin:0 0 8px;letter-spacing:-.01em}h2{font-size:18px;margin:40px 0 12px}
+.lead{color:var(--mu);margin:0 0 32px}
+.install{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:16px}
+.bm{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;background:var(--ac);color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:999px;cursor:grab;box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.bm:active{cursor:grabbing}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button{font:inherit;font-size:14px;background:transparent;color:var(--fg);border:1px solid var(--bd);border-radius:999px;padding:8px 16px;cursor:pointer}
+button:hover{border-color:var(--fg)}
+.small{font-size:14px;color:var(--mu)}
+ol,ul{padding-left:22px;margin:0}li{margin:6px 0}
+code{font:13px ui-monospace,SFMono-Regular,Consolas,monospace;background:rgba(127,127,127,.12);padding:1px 5px;border-radius:4px}
+table{border-collapse:collapse;width:100%;font-size:15px}td{padding:8px 10px;border-top:1px solid var(--bd);vertical-align:top}td:first-child{white-space:nowrap;font-weight:600;width:1%}
+.note{border-left:3px solid var(--ac);padding:4px 0 4px 14px;color:var(--mu);font-size:15px}
+</style></head><body><main>
+<h1>YouTube Transcript</h1>
+<p class="lead">A bookmarklet for YouTube videos and Shorts. It turns an existing caption track into a readable transcript: as .txt, as .md, or straight to the clipboard.</p>
+
+<section class="install">
+  <a class="bm" id="bm" href="{{BOOKMARKLET_HREF}}" title="Drag me to your bookmarks bar">▶ YT Transcript</a>
+  <ol>
+    <li>Show the bookmarks bar (<code>Ctrl+Shift+B</code> / <code>⌘+Shift+B</code>).</li>
+    <li><strong>Drag</strong> the red button above onto the bar.</li>
+    <li>Open a video or a Short on YouTube and click the bookmark.</li>
+  </ol>
+  <div class="row">
+    <button id="copy">Copy code</button>
+    <span class="small" id="msg">Dragging doesn't work? Create a new bookmark and paste the code as its URL.</span>
+  </div>
+</section>
+
+<h2>What the panel does</h2>
+<table>
+<tr><td>Track</td><td>Lists every caption track the video has, by its native name (Deutsch, Français, 日本語 …). Uploaded and auto-generated tracks are grouped separately when both exist. On videos with several audio languages, the original language is marked <em>original</em> and listed first; auto-captions of dubbed audio are marked <em>dubbed</em>, since they transcribe a translation. Your browser language is preselected (uploaded track first, then auto-generated) – <strong>unless it only exists as auto-captions of a dubbed audio track</strong>. In that case the original language is preselected instead, since those captions transcribe a machine translation. You can still pick the dubbed track by hand. Fallbacks: original language, your last choice, the first uploaded track.</td></tr>
+<tr><td>Layout</td><td>Paragraphs at speech pauses (default), one line per caption segment, or a single block of text.</td></tr>
+<tr><td>Paragraph sliders</td><td>Pause threshold (0.5–4 s) and target paragraph length. Once the target is reached, the paragraph breaks at the next sentence end, at the latest at twice the length.</td></tr>
+<tr><td>Options</td><td>Timestamps (clickable jump links in .md), chapters as subheadings, remove <code>[Music]</code>/<code>[Applause]</code>, header with title, channel, date and URL, and the full video description right after the title.</td></tr>
+<tr><td>Output</td><td>Preview in the panel, copy as plain text or Markdown, download as .txt or .md.</td></tr>
+</table>
+
+<h2>How it gets the captions</h2>
+<ol>
+<li>Direct request for the track (<code>timedtext</code>, JSON3).</li>
+<li>If that comes back empty, YouTube wants a proof-of-origin token (<code>pot</code>). The bookmarklet waits for any running ad to finish, briefly switches captions on, reads the token from the player's own request and restores your caption setting. The token then works for every track of that video.</li>
+<li>Last resort: the transcript panel endpoint (<code>get_transcript</code>).</li>
+</ol>
+
+<h2>Limits</h2>
+<p class="note">The bookmarklet relies on YouTube's internal interfaces. If YouTube changes its token scheme, it can stop working. It waits up to two minutes for an ad. Auto-generated captions carry little punctuation in some languages; then only speech pauses shape the paragraphs. Machine translation is intentionally left out. Titles appear in the video's original language.</p>
+<footer class="small" style="margin-top:48px">v{{VERSION}} · <a href="{{REPO_URL}}" style="color:inherit">Source on GitHub</a></footer>
+</main>
+<script>
+const bm=document.getElementById('bm'),msg=document.getElementById('msg');
+bm.addEventListener('click',e=>{e.preventDefault();msg.textContent="Don't click it here – drag it to your bookmarks bar.";});
+document.getElementById('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(bm.getAttribute('href'));msg.textContent='Copied. Create a new bookmark and paste the code as its URL.';}catch(_){msg.textContent='Copying was blocked. Right-click the red button → Copy link address.';}});
+</script></body></html>
