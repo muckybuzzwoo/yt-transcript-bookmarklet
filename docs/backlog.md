@@ -3,8 +3,8 @@
 ## Next
 
 - [ ] **GitHub Pages for the install page**
-  1. Create the GitHub repo, push.
-  2. Set `"repository": "https://github.com/<user>/yt-transcript-bookmarklet"` in `package.json` (feeds `{{REPO_URL}}` on the page).
+  1. ~~Create the GitHub repo, push.~~ Done 2026-11-20: https://github.com/muckybuzzwoo/yt-transcript-bookmarklet
+  2. ~~Set `"repository"` in `package.json`~~ (feeds `{{REPO_URL}}` on the page). Done 2026-11-20.
   3. Add `.github/workflows/pages.yml`: on push to `main` → `actions/checkout`, `actions/setup-node` (Node 22, npm cache),
      `npm ci`, `npm run build`, `actions/configure-pages`, `actions/upload-pages-artifact` with `path: dist`, `actions/deploy-pages`.
      Permissions: `pages: write`, `id-token: write`, `contents: read`; environment `github-pages`.

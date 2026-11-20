@@ -5,6 +5,7 @@
   "private": true,
   "type": "module",
   "license": "MIT",
+  "repository": "https://github.com/muckybuzzwoo/yt-transcript-bookmarklet",
   "scripts": {
     "check": "node --check src/yt-transcript.js",
     "build": "npm run check && node scripts/build.mjs"
