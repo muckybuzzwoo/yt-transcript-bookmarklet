@@ -1,6 +1,6 @@
 # Release: push a tag vX.Y.Z (must match package.json "version").
 # Builds dist/, creates the GitHub release (notes = changelog section) and deploys the install page to GitHub Pages.
-# Manual run (Actions tab or `gh workflow run release.yml --ref vX.Y.Z`) only redeploys Pages for that tag.
+# Manual run (Actions tab or `gh workflow run release.yml --ref <branch or tag>`) only redeploys Pages from that ref.
 name: Release
 
 on:
@@ -29,6 +29,7 @@ jobs:
           cache: npm
 
       - name: Tag must match package.json version
+        if: github.ref_type == 'tag'
         run: |
           want="v$(jq -r .version package.json)"
           if [ "$GITHUB_REF_NAME" != "$want" ]; then
@@ -40,6 +41,7 @@ jobs:
       - run: npm run build
 
       - name: Release notes from docs/changelog.md
+        if: github.event_name == 'push'
         run: |
           v="${GITHUB_REF_NAME#v}"
           awk -v v="$v" '/^## /{p = index($0, "## " v " ") == 1; next} p' docs/changelog.md > notes.md
