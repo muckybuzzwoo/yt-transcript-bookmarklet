@@ -2,16 +2,9 @@
 
 ## Next
 
-- [ ] **GitHub Pages for the install page**
-  1. ~~Create the GitHub repo, push.~~ Done 2026-11-20: https://github.com/muckybuzzwoo/yt-transcript-bookmarklet
-  2. ~~Set `"repository"` in `package.json`~~ (feeds `{{REPO_URL}}` on the page). Done 2026-11-20.
-  3. Add `.github/workflows/pages.yml`: on push to `main` → `actions/checkout`, `actions/setup-node` (Node 22, npm cache),
-     `npm ci`, `npm run build`, `actions/configure-pages`, `actions/upload-pages-artifact` with `path: dist`, `actions/deploy-pages`.
-     Permissions: `pages: write`, `id-token: write`, `contents: read`; environment `github-pages`.
-  4. Repo → Settings → Pages → Source: **GitHub Actions**.
-  5. Commit `package-lock.json` (needed for `npm ci`).
-  6. Link the Pages URL in `README.md`.
-  7. Check that dragging the button from the Pages site into the bookmarks bar works (Chrome, Edge, Firefox).
+- [x] **GitHub Pages for the install page** (2026-11-20): repo, `.github/workflows/release.yml`, Pages source "GitHub Actions",
+  tag rule `v*` on the `github-pages` environment, README link. See decision 18.
+- [ ] Check that dragging the button from the Pages site into the bookmarks bar works (Chrome, Edge, Firefox).
 
 ## Verify (open test cases, see testing.md)
 - [x] Optgroup view on a video with uploaded + ASR tracks (2026-11-20)

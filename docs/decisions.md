@@ -19,3 +19,6 @@ Newest last. Format: decision – reason. All from 2026-11-20 unless dated other
 15. **Mark `original` and `dubbed`** – on dubbed videos ASR captions of dubbed languages transcribe machine audio. Original listed first.
 16. **Never preselect a `dubbed` track** – if the browser language only exists as dubbed ASR, preselect the original language instead. Manual selection still possible.
 17. **Docs in English, MIT license** – repo is public-ready.
+18. **One workflow on version tags: release + Pages** – the install page only changes on a release, so it never runs ahead of the
+    latest release. Release notes come from `docs/changelog.md`, so there is one source for them. The `github-pages` environment
+    needs a deployment rule for tags `v*` (by default only the default branch may deploy).

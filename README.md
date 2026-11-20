@@ -12,7 +12,8 @@ Works on watch pages, Shorts and live replays. No extension, no server, nothing 
 - Waits for running ads, restores your caption setting afterwards.
 
 ## Install
-**Install page:** _GitHub Pages URL – see docs/backlog.md_
+**Install page:** https://muckybuzzwoo.github.io/yt-transcript-bookmarklet/ – drag the red button into your bookmarks bar.
+All versions: [Releases](https://github.com/muckybuzzwoo/yt-transcript-bookmarklet/releases).
 
 Or build locally and open the page:
 

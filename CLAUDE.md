@@ -11,6 +11,7 @@ transcript (.txt / .md / clipboard). Runs on youtube.com watch pages, Shorts and
 | `site/index.template.html` | Install page. Placeholders: `{{BOOKMARKLET_HREF}}`, `{{VERSION}}`, `{{REPO_URL}}` |
 | `scripts/build.mjs` | Minifies (terser), percent-encodes, round-trip + parse check, renders the page |
 | `dist/` | Generated, git-ignored: `yt-transcript.min.js`, `bookmarklet.txt`, `index.html` |
+| `.github/workflows/release.yml` | On tag `vX.Y.Z`: build, GitHub release, deploy install page to Pages |
 | `docs/` | Architecture, YouTube internals, decisions, testing, backlog, changelog |
 
 ## Commands
@@ -35,6 +36,11 @@ Dev environment: Windows 11 native (no WSL), Node ≥ 18.
    - user-visible change → `docs/changelog.md` + bump `version` in `package.json`
    - open questions / ideas → `docs/backlog.md`
    - install page text, if behavior described there changes → `site/index.template.html`
+5. Release (only when the user asks): `npm version X.Y.Z --no-git-tag-version`, changelog section `## X.Y.Z – date`,
+   commit, `git tag vX.Y.Z`, push `main` and the tag. The workflow fails if tag and `package.json` differ
+   or the changelog section is missing. Pages only updates on a release, so the install page always matches the latest release.
+
+Repo: https://github.com/muckybuzzwoo/yt-transcript-bookmarklet (public). Install page: https://muckybuzzwoo.github.io/yt-transcript-bookmarklet/
 
 ## Hard constraints
 

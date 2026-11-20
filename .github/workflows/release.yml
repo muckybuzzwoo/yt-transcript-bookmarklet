@@ -1,0 +1,72 @@
+# Release: push a tag vX.Y.Z (must match package.json "version").
+# Builds dist/, creates the GitHub release (notes = changelog section) and deploys the install page to GitHub Pages.
+# Manual run (Actions tab or `gh workflow run release.yml --ref vX.Y.Z`) only redeploys Pages for that tag.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Tag must match package.json version
+        run: |
+          want="v$(jq -r .version package.json)"
+          if [ "$GITHUB_REF_NAME" != "$want" ]; then
+            echo "::error::Ref $GITHUB_REF_NAME does not match package.json version $want"
+            exit 1
+          fi
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Release notes from docs/changelog.md
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          awk -v v="$v" '/^## /{p = index($0, "## " v " ") == 1; next} p' docs/changelog.md > notes.md
+          if [ ! -s notes.md ]; then echo "::error::No changelog section for $v"; exit 1; fi
+          printf '\nInstall page: https://%s.github.io/%s/\n' "$GITHUB_REPOSITORY_OWNER" "${GITHUB_REPOSITORY#*/}" >> notes.md
+
+      - name: Create GitHub release
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp dist/index.html dist/yt-transcript-install.html
+          gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file notes.md \
+            dist/yt-transcript-install.html dist/bookmarklet.txt dist/yt-transcript.min.js
+          rm dist/yt-transcript-install.html
+
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
